@@ -38,8 +38,30 @@ namespace Collapse {
          */
         private void FindChainRecursive(BlockType type, int col, int row, List<(int row, int col)> testedPositions,
             List<Block> results) {
-            //TODO: Replace this with real implementation
+
+            testedPositions.Add((col, row));
             results.Add(blocks[col, row]);
+
+            (int colOffset, int rowOffset)[] offsets = new (int colOffset, int rowOffset)[]
+            {
+                (1, 0),
+                (0, 1),
+                (-1, 0),
+                (0, -1)
+            };
+
+            foreach (var (colOffset, rowOffset) in offsets)
+            {
+                var newPos = (col + colOffset, row + rowOffset);
+
+                if (newPos.Item1 < 0 || newPos.Item1 >= BoardSize.x || newPos.Item2 < 0 || newPos.Item2 >= BoardSize.y)
+                    continue;
+
+                if (blocks[newPos.Item1, newPos.Item2].Type != type || testedPositions.Contains(newPos))
+                    continue;
+
+                FindChainRecursive(blocks[col, row].Type, newPos.Item1, newPos.Item2, testedPositions, results);
+            }
         }
     }
 }
